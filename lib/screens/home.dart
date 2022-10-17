@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/core/credentials_service.dart';
+import 'package:hrms_app/screens/drawer.dart';
 import 'package:hrms_app/screens/login.dart';
 
 class App extends StatelessWidget {
@@ -71,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: const Center(child: Text('Home')),
+      drawer: const AppDrawer(),
     );
   }
 }
