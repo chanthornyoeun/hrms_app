@@ -69,9 +69,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final logo = Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(20),
+      child: const Image(
+        image: AssetImage('assets/logo/baksey_logo.png'),
+        width: 300,
+      ),
+    );
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: const Center(child: Text('Home')),
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [logo],
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: const Text('Leave'),
+                  onTap: () {},
+                  leading: const Icon(Icons.work_off),
+                ),
+                ListTile(
+                  title: const Text('Attendance'),
+                  onTap: () {},
+                  leading: const Icon(Icons.lock_clock),
+                ),
+                ListTile(
+                  title: const Text('Employees'),
+                  onTap: () {},
+                  leading: const Icon(Icons.group),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       drawer: const AppDrawer(),
     );
   }
