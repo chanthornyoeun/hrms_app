@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hrms_app/core/auth_service.dart';
 import 'package:hrms_app/core/credentials_service.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:go_router/go_router.dart';
 
 class AppDrawer extends StatefulWidget {
 
@@ -65,8 +66,8 @@ class _AppDrawerState extends State<AppDrawer> {
               setState(() {
                 isLoading = false;
               });
-              Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
-            },
+                GoRouter.of(context).go('/');
+              },
           ),
         ],
       ),

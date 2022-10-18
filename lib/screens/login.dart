@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hrms_app/screens/home.dart';
 import 'package:hrms_app/core/credentials_service.dart';
 import '../models/response_dto.dart';
 import '../core/auth_service.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         setState(() {
                           _isLoading = false;
                         });
-                        Navigator.pushReplacementNamed(context, '/home');
+                        GoRouter.of(context).go('/home');
                       }
                     },
                     child: const Text('Login'),
