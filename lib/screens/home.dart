@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/routes/route.dart';
 import 'package:hrms_app/screens/drawer.dart';
+import 'package:go_router/go_router.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -11,12 +12,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-        title: 'HRMS',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        routerConfig: routerConfig,
-);
+      title: 'HRMS',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      routerConfig: routerConfig,
+    );
   }
 }
 
@@ -30,7 +31,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     final logo = Container(
@@ -64,7 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ListTile(
                   title: const Text('Employees'),
-                  onTap: () {},
+                  onTap: () {
+                    GoRouter.of(context).push('/employee');
+                  },
                   leading: const Icon(Icons.group),
                 ),
               ],

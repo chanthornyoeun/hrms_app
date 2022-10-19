@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/core/credentials_service.dart';
+import 'package:hrms_app/screens/employee.dart';
 import 'package:hrms_app/screens/home.dart';
 import 'package:hrms_app/screens/login.dart';
 import 'package:go_router/go_router.dart';
@@ -27,6 +28,12 @@ final GoRouter routerConfig =  GoRouter(
           path: '/login',
           builder: (BuildContext context, GoRouterState state) {
             return const LoginScreen();
+          }
+      ),
+      GoRoute(
+          path: '/employee',
+          builder: (BuildContext context, GoRouterState state) {
+            return const EmployeeScreen();
           }
       ),
     ]
