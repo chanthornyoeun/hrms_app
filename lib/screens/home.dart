@@ -3,6 +3,8 @@ import 'package:hrms_app/routes/route.dart';
 import 'package:hrms_app/screens/drawer.dart';
 import 'package:go_router/go_router.dart';
 
+import '../services/location_service.dart';
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -32,6 +34,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    LocationService().requestPermission();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final logo = Container(
       alignment: Alignment.center,
@@ -59,7 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ListTile(
                   title: const Text('Attendance'),
-                  onTap: () {},
+                  onTap: () {
+                    GoRouter.of(context).push('/attendance');
+                  },
                   leading: const Icon(Icons.lock_clock),
                 ),
                 ListTile(
