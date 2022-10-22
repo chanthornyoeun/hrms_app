@@ -59,7 +59,7 @@ class AttendanceCard extends StatelessWidget {
         ),
         const SizedBox(width: 2),
         Text(
-          '${_formatDate(DateTime.parse(attendance.checkIn!))} (${attendance.statusCheckIn})',
+          '${_formatDate(DateTime.parse(attendance.checkIn!))} ${attendance.statusCheckIn != null ? '(${attendance.statusCheckIn})' : ''}',
           style: _style,
         )
       ],
@@ -77,7 +77,7 @@ class AttendanceCard extends StatelessWidget {
         const SizedBox(width: 2),
         if (attendance.checkOut != null)
           Text(
-            '${_formatDate(DateTime.parse(attendance.checkOut!))} (${attendance.statusCheckOut})',
+            '${_formatDate(DateTime.parse(attendance.checkOut!))} ${attendance.statusCheckOut != null ? '(${attendance.statusCheckOut})' : ''}',
             style: _style,
           ),
         if (attendance.checkOut == null)
