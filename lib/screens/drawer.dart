@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/core/auth_service.dart';
 import 'package:hrms_app/core/credentials_service.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class AppDrawer extends StatefulWidget {
 
@@ -19,8 +19,9 @@ class _AppDrawerState extends State<AppDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return ModalProgressHUD(
-      inAsyncCall: isLoading,
+    return LoadingOverlay(
+      isLoading: isLoading,
+      opacity: 0.2,
       child: _buildWidget(context),
     );
   }

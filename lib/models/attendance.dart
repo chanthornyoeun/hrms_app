@@ -12,9 +12,9 @@ class Attendance {
   String? statusCheckOut;
   String? descriptionCheckIn;
   String? descriptionCheckOut;
-  late String startTime;
-  late String endTime;
-  late int workingDuration;
+  String? startTime;
+  String? endTime;
+  late int? workingDuration;
   late Employee employee;
   late int? totalWorkingMinutes;
   int? overMinutes;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/core/credentials_service.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import '../models/response_dto.dart';
 import '../core/auth_service.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,8 +24,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ModalProgressHUD(
-        inAsyncCall: _isLoading,
+      body: LoadingOverlay(
+        isLoading: _isLoading,
+        opacity: 0.2,
         child: _buildWidget(),
       ),
     );

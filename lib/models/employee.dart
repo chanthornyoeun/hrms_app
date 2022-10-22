@@ -11,8 +11,8 @@ class Employee {
   String? department;
   String? email;
   String? phone;
-  int isActive;
-  String profilePhoto;
+  int? isActive;
+  String? profilePhoto;
 
   Employee({
     required this.id,
@@ -27,8 +27,8 @@ class Employee {
     this.department,
     this.email,
     this.phone,
-    required this.profilePhoto,
-    required this.isActive
+    this.profilePhoto,
+    this.isActive
   });
 
   factory Employee.fromJson(Map<String, dynamic> json) {

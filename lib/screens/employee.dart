@@ -3,7 +3,7 @@ import 'package:hrms_app/core/debounce_time.dart';
 import 'package:hrms_app/models/employee.dart';
 import 'package:hrms_app/models/response_dto.dart';
 import 'package:hrms_app/services/employee_service.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class EmployeeScreen extends StatefulWidget {
   const EmployeeScreen({Key? key}) : super(key: key);
@@ -83,8 +83,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       appBar: AppBar(
         title: const Text('Employees'),
       ),
-      body: ModalProgressHUD(
-          inAsyncCall: _isLoading,
+      body: LoadingOverlay(
+          isLoading: _isLoading,
+          opacity: 0.2,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
