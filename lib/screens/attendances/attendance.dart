@@ -1,12 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:hrms_app/core/credentials_service.dart';
-import 'package:hrms_app/models/attendance.dart';
-import 'package:hrms_app/models/response_dto.dart';
-import 'package:hrms_app/screens/attendances/attendance_card.dart';
-import 'package:hrms_app/services/attendance_service.dart';
-import 'package:hrms_app/screens/attendances/attendance_checker.dart';
+import 'attendance_list.dart';
+import 'today_attendance.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({Key? key}) : super(key: key);
@@ -15,50 +9,57 @@ class AttendanceScreen extends StatefulWidget {
   _AttendanceScreenState createState() => _AttendanceScreenState();
 }
 
-class _AttendanceScreenState extends State<AttendanceScreen> {
-  final AttendanceService _attendanceService = AttendanceService();
-  Future<Attendance>? _attendance;
+class _AttendanceScreenState extends State<AttendanceScreen>
+    with SingleTickerProviderStateMixin {
+  late List<Tab> _tabs;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _attendance = _getTodayAttendace();
+    _tabs = [
+      Tab(
+        child: Row(children: const [
+          Icon(Icons.qr_code),
+          Text(
+            'Check-in/Check-out',
+          )
+        ]),
+      ),
+      Tab(
+        child: Row(children: const [
+          Icon(Icons.receipt),
+          Text(
+            'Your attendances',
+          )
+        ]),
+      )
+    ];
+    _tabController = TabController(vsync: this, length: _tabs.length);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Attendance'), centerTitle: true),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(10),
-              child: FutureBuilder(
-                future: _attendance,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return AttendanceCard(attendance: snapshot.data!);
-                  }
-                  if (snapshot.hasError) {
-                    return const Text("You haven't check-in yet today.");
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
-            ),
-            const AttendanceChecker(),
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text('Attendance'),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          TabBar(
+            tabs: _tabs,
+            controller: _tabController,
+            labelColor: Colors.black,
+          ),
+          Expanded(
+              child: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: const [TodayAttendance(), AttendanceList()],
+          ))
+        ],
       ),
     );
-  }
-
-  Future<Attendance> _getTodayAttendace() async {
-    final int employeeId = await CredentialsService().getCurrentEmployee();
-    ResponseDTO res = await _attendanceService.getTodayAttendance(employeeId);
-    return Attendance.fromJson(res.data[0]);
   }
 }
