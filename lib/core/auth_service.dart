@@ -23,11 +23,7 @@ class AuthService {
         },
         body: jsonEncode(credential));
 
-    if (res.statusCode == 200) {
-      return ResponseDTO.fromJson(jsonDecode(res.body));
-    } else {
-      throw 'Unable to login';
-    }
+    return ResponseDTO.fromJson(jsonDecode(res.body));
   }
 
   Future<ResponseDTO> logout() async {

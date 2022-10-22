@@ -98,6 +98,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                       ResponseDTO res = await authService.login(
                           usernameController.text, passwordController.text);
+                      setState(() {
+                        _isLoading = false;
+                      });
                       if (!context.mounted) return;
                       if (res.statusCode == 200) {
                         credentialsService.save(res.data);
@@ -106,12 +109,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         });
                         GoRouter.of(context).go('/home');
                       }
+
+                      if (res.statusCode == 401 || res.statusCode == 500) {
+                        _showErrorMessage(res.message);
+                      }
                     },
                     child: const Text('Login'),
                   )),
             ],
           ),
         ));
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 
   @override
