@@ -41,16 +41,12 @@ class AttendanceService extends HttpService {
   }
 
   Future<ResponseDTO> getTodayAttendance(int employeeId) {
-    final DateTime currentDate = DateUtils.dateOnly(DateTime.now());
-    final String fromDate = currentDate.toUtc().toIso8601String();
-    final String toDate = currentDate
-        .add(const Duration(hours: 23, minutes: 59, seconds: 59))
-        .toUtc()
-        .toIso8601String();
+    final String currentDate =
+        DateUtils.dateOnly(DateTime.now()).toUtc().toIso8601String();
     Map<String, dynamic> params = {
       'employeeId': employeeId,
-      'fromDate': fromDate,
-      'toDate': toDate
+      'fromDate': currentDate,
+      'toDate': currentDate
     };
     return get(param: params);
   }

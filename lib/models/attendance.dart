@@ -1,13 +1,15 @@
 import 'package:hrms_app/models/employee.dart';
 
+import '../utils/date_time_extension.dart';
+
 class Attendance {
   late int id;
   late int employeeId;
-  String? checkIn;
-  String? checkOut;
+  late DateTime checkIn;
+  DateTime? checkOut;
   String? description;
-  String? createdAt;
-  String? updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
   String? statusCheckIn;
   String? statusCheckOut;
   String? descriptionCheckIn;
@@ -23,7 +25,7 @@ class Attendance {
   Attendance({
     required this.id,
     required this.employeeId,
-    this.checkIn,
+    required this.checkIn,
     this.checkOut,
     this.description,
     this.createdAt,
@@ -44,11 +46,11 @@ class Attendance {
   Attendance.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     employeeId = json['employeeId'];
-    checkIn = json['checkIn'];
-    checkOut = json['checkOut'];
+    checkIn = DateTimeExtension.parseUtc(json['checkIn']);
+    checkOut = DateTimeExtension.tryParseUtc(json['checkOut']);
     description = json['description'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
+    createdAt = DateTimeExtension.tryParseUtc(json['createdAt']);
+    updatedAt = DateTimeExtension.tryParseUtc(json['updatedAt']);
     statusCheckIn = json['statusCheckIn'];
     statusCheckOut = json['statusCheckOut'];
     descriptionCheckIn = json['descriptionCheckIn'];

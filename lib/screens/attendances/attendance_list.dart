@@ -85,8 +85,8 @@ class _AttendanceListState extends State<AttendanceList> {
     }
 
     if (res.statusCode == 200) {
-      for (var employee in res.data) {
-        _attendances.add(Attendance.fromJson(employee));
+      for (var attendance in res.data) {
+        _attendances.add(Attendance.fromJson(attendance));
       }
     }
     setState(() {

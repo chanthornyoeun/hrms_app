@@ -26,8 +26,8 @@ class AttendanceCard extends StatelessWidget {
             _getCheckInText(),
             space,
             _getCheckOutText(),
-            if (attendance.totalWorkingMinutes != 0 &&
-                attendance.totalWorkingMinutes != null)
+            if (attendance.totalWorkingMinutes != null &&
+                attendance.totalWorkingMinutes! > 0)
               _getWorkingHoursText(),
           ],
         ),
@@ -40,9 +40,7 @@ class AttendanceCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          DateFormat('EEEE dd MMM, yyyy')
-              .format(DateTime.parse(attendance.checkIn!))
-              .toString(),
+          DateFormat('EEEE dd MMM, yyyy').format(attendance.checkIn).toString(),
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
       ],
@@ -59,7 +57,7 @@ class AttendanceCard extends StatelessWidget {
         ),
         const SizedBox(width: 2),
         Text(
-          '${_formatDate(DateTime.parse(attendance.checkIn!))} ${attendance.statusCheckIn != null ? '(${attendance.statusCheckIn})' : ''}',
+          '${_formatDate(attendance.checkIn)} ${attendance.statusCheckIn != null ? '(${attendance.statusCheckIn})' : ''}',
           style: _style,
         )
       ],
@@ -77,7 +75,7 @@ class AttendanceCard extends StatelessWidget {
         const SizedBox(width: 2),
         if (attendance.checkOut != null)
           Text(
-            '${_formatDate(DateTime.parse(attendance.checkOut!))} ${attendance.statusCheckOut != null ? '(${attendance.statusCheckOut})' : ''}',
+            '${_formatDate(attendance.checkOut!)} ${attendance.statusCheckOut != null ? '(${attendance.statusCheckOut})' : ''}',
             style: _style,
           ),
         if (attendance.checkOut == null)
