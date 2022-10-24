@@ -60,20 +60,34 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: ListView(
               children: [
+                const Divider(),
                 ListTile(
-                  title: const Text('Leave'),
-                  onTap: () {},
+                  title: const Text('Leave Request'),
+                  subtitle: const Text(
+                    'See your leave details, or make a new request',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  onTap: () {
+                    GoRouter.of(context).push('/leave-request');
+                  },
                   leading: const Icon(Icons.work_off),
                 ),
+                const Divider(),
                 ListTile(
                   title: const Text('Attendance'),
+                  subtitle: const Text(
+                      'QR Code Scanning for checking attendance',
+                      style: TextStyle(fontSize: 12)),
                   onTap: () {
                     GoRouter.of(context).push('/attendance');
                   },
                   leading: const Icon(Icons.lock_clock),
                 ),
+                const Divider(),
                 ListTile(
                   title: const Text('Employees'),
+                  subtitle: const Text('See all employees',
+                      style: TextStyle(fontSize: 12)),
                   onTap: () {
                     GoRouter.of(context).push('/employee');
                   },
