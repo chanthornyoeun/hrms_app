@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hrms_app/core/credentials_service.dart';
 import 'package:hrms_app/screens/employee.dart';
 import 'package:hrms_app/screens/home.dart';
+import 'package:hrms_app/screens/leave_management/leave_request.dart';
+import 'package:hrms_app/screens/leave_management/request_form.dart';
 import 'package:hrms_app/screens/login.dart';
 import 'package:go_router/go_router.dart';
 
@@ -56,5 +58,18 @@ final GoRouter routerConfig =
                     return const AttendanceScannerScreen();
                   }),
             ]),
+        GoRoute(
+          path: '/leave-request',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LeaveRequestScreen();
+          },
+          routes: <RouteBase>[
+            GoRoute(
+                path: 'request-form',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const RequestForm();
+                }),
+          ],
+        ),
       ]),
 ]);

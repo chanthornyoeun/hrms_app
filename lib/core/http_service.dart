@@ -17,11 +17,7 @@ abstract class HttpService {
       'X-API-KEY': 'aHJtcy1wcm9qZWN0LXhhcGlrZXktc2Vj',
       HttpHeaders.authorizationHeader: 'Bearer $token'
     });
-    if (res.statusCode == 200) {
-      return ResponseDTO.fromJson(jsonDecode(res.body));
-    } else {
-      throw 'Unable to get data';
-    }
+    return ResponseDTO.fromJson(jsonDecode(res.body));
   }
 
   Future<ResponseDTO> save(Map<String, dynamic> body,
@@ -30,14 +26,11 @@ abstract class HttpService {
     http.Response res = await http.post(Uri.parse(getFullURL(params: param)),
         headers: {
           'X-API-KEY': X_API_KEY,
-          HttpHeaders.authorizationHeader: 'Bearer $token'
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json'
         },
         body: jsonEncode(body));
-    if (res.statusCode == 200) {
-      return ResponseDTO.fromJson(jsonDecode(res.body));
-    } else {
-      throw 'Unable to save';
-    }
+    return ResponseDTO.fromJson(jsonDecode(res.body));
   }
 
   Future<ResponseDTO> update(int id, Map<String, dynamic> body,
@@ -47,14 +40,11 @@ abstract class HttpService {
     http.Response res = await http.put(Uri.parse(url),
         headers: {
           'X-API-KEY': X_API_KEY,
-          HttpHeaders.authorizationHeader: 'Bearer $token'
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json'
         },
         body: jsonEncode(body));
-    if (res.statusCode == 200) {
-      return ResponseDTO.fromJson(jsonDecode(res.body));
-    } else {
-      throw 'Unable to update';
-    }
+    return ResponseDTO.fromJson(jsonDecode(res.body));
   }
 
   Future<ResponseDTO> delete(int id, {Map<String, dynamic>? param}) async {
@@ -64,11 +54,7 @@ abstract class HttpService {
       'X-API-KEY': X_API_KEY,
       HttpHeaders.authorizationHeader: 'Bearer $token'
     });
-    if (res.statusCode == 200) {
-      return ResponseDTO.fromJson(jsonDecode(res.body));
-    } else {
-      throw 'Unable to delete';
-    }
+    return ResponseDTO.fromJson(jsonDecode(res.body));
   }
 
   String getFullURL({Map<String, dynamic>? params}) {
