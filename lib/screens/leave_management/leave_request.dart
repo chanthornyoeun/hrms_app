@@ -5,7 +5,6 @@ import 'package:hrms_app/models/leave_request.dart';
 import 'package:hrms_app/models/response_dto.dart';
 import 'package:hrms_app/screens/leave_management/leave_request_card.dart';
 import 'package:hrms_app/services/leave_request_service.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class LeaveRequestScreen extends StatefulWidget {
@@ -61,21 +60,20 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
       {bool clearData = false}) async {
     setState(() {
       _isLoading = true;
+      if (clearData) {
+        _leaveRequests.clear();
+      }
     });
     final int employeeId = await CredentialsService().getCurrentEmployee();
     params['employeeId'] = employeeId;
     ResponseDTO res = await _leaveRequestService.get(param: params);
 
-    if (clearData) {
-      _leaveRequests.clear();
-    }
-
     if (res.statusCode == 200) {
       for (var leaveRequest in res.data) {
         _leaveRequests.add(LeaveRequest.fromJson(leaveRequest));
       }
-      debugPrint("========= Leave Requst: ${_leaveRequests[0].toJson()}");
     }
+
     setState(() {
       _isLoading = false;
       _total = res.total;
