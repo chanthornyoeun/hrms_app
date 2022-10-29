@@ -130,7 +130,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     List<Card> cards = [];
     for (Employee employee in employees) {
       final Card card = Card(
-        margin: const EdgeInsets.all(5),
+        elevation: 4,
         child: Container(
           padding: const EdgeInsets.all(10),
           child: Row(
