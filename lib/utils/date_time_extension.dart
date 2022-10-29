@@ -4,7 +4,7 @@ extension DateTimeExtension on DateTime {
 
   static DateTime? tryParseUtc(String? formattedDate) {
     if (formattedDate != null) {
-      return DateTime.tryParse(formattedDate);
+      return parseUtc(formattedDate);
     }
     return null;
   }
