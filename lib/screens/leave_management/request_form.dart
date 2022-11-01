@@ -57,7 +57,7 @@ class _RequestFormState extends State<RequestForm> {
 
   @override
   Widget build(BuildContext context) {
-    const SizedBox space = SizedBox(height: 20);
+    const SizedBox space = SizedBox(height: 16);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Leave'),
@@ -66,7 +66,7 @@ class _RequestFormState extends State<RequestForm> {
         isLoading: _isLoading,
         opacity: 0.2,
         child: Container(
-          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -163,10 +163,20 @@ class _RequestFormState extends State<RequestForm> {
                     },
                   ),
                   space,
-                  _actions()
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: ElevatedButton(
+          onPressed: _submitHandler,
+          style: ElevatedButton.styleFrom(fixedSize: const Size(double.maxFinite, 48)),
+          child: Text(
+            'Apply Leave'.toUpperCase(),
+            style: const TextStyle(fontSize: 16),
           ),
         ),
       ),
@@ -230,34 +240,6 @@ class _RequestFormState extends State<RequestForm> {
     return _isSelected[1];
   }
 
-  Row _actions() {
-    final style = ElevatedButton.styleFrom(fixedSize: const Size(100, 48));
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        ElevatedButton(
-          onPressed: _submitHandler,
-          style: style,
-          child: const Text(
-            'Submit',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8),
-          child: TextButton(
-              onPressed: _goBack,
-              style: style,
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.red, fontSize: 16),
-              )),
-        ),
-      ],
-    );
-  }
-
   void _submitHandler() async {
     if (!_formKey.currentState!.validate()) {
       _showMessage("Please fill all required information.");
@@ -308,6 +290,7 @@ class _RequestFormState extends State<RequestForm> {
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
+      duration: const Duration(milliseconds: 1000),
     ));
   }
 
