@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hrms_app/services/employee_service.dart';
 
 import '../../core/credentials_service.dart';
 import '../../models/attendance.dart';
@@ -16,39 +17,75 @@ class TodayAttendance extends StatefulWidget {
 
 class _TodayAttendanceState extends State<TodayAttendance> {
   final AttendanceService _attendanceService = AttendanceService();
+  final EmployeeService _employeeService = EmployeeService();
   Future<Attendance>? _attendance;
+  late Future<Map<String, dynamic>> _todayCalendar;
 
   @override
   void initState() {
     super.initState();
-    _attendance = _getTodayAttendace();
+    _todayCalendar = _getCurrentEmployee();
+  }
+
+  Future<Map<String, dynamic>> _getCurrentEmployee() async {
+    ResponseDTO res = await _employeeService.getCurrentEmployee();
+    return res.data['employee']['workingCalendarToday'];
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: FutureBuilder(
-              future: _attendance,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return AttendanceCard(attendance: snapshot.data!);
-                }
-                if (snapshot.hasError) {
-                  return const Text("You haven't check-in yet today.");
-                }
-                return const CircularProgressIndicator();
-              },
-            ),
-          ),
-          const AttendanceChecker(),
-        ],
+      child: FutureBuilder(
+        future: _todayCalendar,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return _determineScreen(snapshot.data!);
+          }
+          if (snapshot.hasError) {
+            return const Text("Something went wrong!");
+          }
+          return const CircularProgressIndicator();
+        },
       ),
+    );
+  }
+
+  Widget _determineScreen(Map<String, dynamic> todayCalendar) {
+    if (todayCalendar['isWorking'] == 1) {
+      _attendance = _getTodayAttendace();
+      return _working();
+    }
+    return _weekend();
+  }
+
+  Column _working() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          margin: const EdgeInsets.all(10),
+          child: FutureBuilder(
+            future: _attendance,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return AttendanceCard(attendance: snapshot.data!);
+              }
+              if (snapshot.hasError) {
+                return const Text("You haven't check-in yet today.");
+              }
+              return const CircularProgressIndicator();
+            },
+          ),
+        ),
+        const AttendanceChecker(),
+      ],
+    );
+  }
+
+  Center _weekend() {
+    return const Center(
+      child: Text('Happy weekend!'),
     );
   }
 
