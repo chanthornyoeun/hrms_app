@@ -24,4 +24,32 @@ class LeaveRequestService extends HttpService {
     );
     return ResponseDTO.fromJson(jsonDecode(res.body));
   }
+
+  Future<ResponseDTO> reject(int leaveRequestId, String reason) async {
+    final token = await credentialsService.getCredentials();
+    final body = {'comment': reason};
+    http.Response res = await http.post(
+        Uri.parse('$basedURL/api/leave-request-reject/$leaveRequestId'),
+        headers: {
+          'X-API-KEY': HttpService.X_API_KEY,
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
+        body: jsonEncode(body));
+    return ResponseDTO.fromJson(jsonDecode(res.body));
+  }
+
+  Future<ResponseDTO> approve(int leaveRequestId, {String? comment}) async {
+    final token = await credentialsService.getCredentials();
+    final body = {'comment': comment};
+    http.Response res = await http.post(
+        Uri.parse('$basedURL/api/leave-request-approve/$leaveRequestId'),
+        headers: {
+          'X-API-KEY': HttpService.X_API_KEY,
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
+        body: jsonEncode(body));
+    return ResponseDTO.fromJson(jsonDecode(res.body));
+  }
 }

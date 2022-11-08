@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hrms_app/core/credentials_service.dart';
 import 'package:hrms_app/models/leave_request.dart';
 import 'package:hrms_app/models/response_dto.dart';
 import 'package:hrms_app/screens/leave_management/leave_request_card.dart';
@@ -8,7 +7,15 @@ import 'package:hrms_app/services/leave_request_service.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class LeaveRequestScreen extends StatefulWidget {
-  const LeaveRequestScreen({Key? key}) : super(key: key);
+  const LeaveRequestScreen(
+      {Key? key,
+      required this.selfLeave,
+      required this.title,
+      required this.isManager})
+      : super(key: key);
+  final int selfLeave;
+  final String title;
+  final bool isManager;
 
   @override
   _LeaveRequestScreenState createState() => _LeaveRequestScreenState();
@@ -64,8 +71,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
         _leaveRequests.clear();
       }
     });
-    final int employeeId = await CredentialsService().getCurrentEmployee();
-    params['employeeId'] = employeeId;
+    widget.selfLeave == 1 ? params['selfLeave'] = 1 : params['reportToMe'] = 1;
     ResponseDTO res = await _leaveRequestService.get(param: params);
 
     if (res.statusCode == 200) {
@@ -85,28 +91,33 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Leave Request'),
+        title: Text(widget.title),
       ),
       body: LoadingOverlay(
         isLoading: _isLoading,
         opacity: 0.2,
         child: RefreshIndicator(
           onRefresh: _pullRefresh,
-          child: ListView(
+          child: ListView.builder(
             controller: _scrollController,
             padding: const EdgeInsets.all(8),
             physics: const AlwaysScrollableScrollPhysics(),
-            children: [
-              for (var leaveRequest in _leaveRequests)
-                LeaveRequestCard(leaveRequest: leaveRequest)
-            ],
+            itemCount: _leaveRequests.length,
+            itemBuilder: (context, index) => LeaveRequestCard(
+              leaveRequest: _leaveRequests[index],
+              selfLeave: widget.selfLeave,
+              isManager: widget.isManager,
+            ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            {GoRouter.of(context).push('/leave-request/request-form')},
-        child: const Icon(Icons.add),
+      floatingActionButton: Visibility(
+        visible: widget.selfLeave == 1,
+        child: FloatingActionButton(
+          onPressed: () =>
+              {GoRouter.of(context).push('/leave-request/request-form')},
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

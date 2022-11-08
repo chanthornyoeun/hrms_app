@@ -59,9 +59,23 @@ final GoRouter routerConfig =
                   }),
             ]),
         GoRoute(
+          path: '/employee-leave-request',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LeaveRequestScreen(
+              selfLeave: 0,
+              title: 'Employee Leave',
+              isManager: true,
+            );
+          },
+        ),
+        GoRoute(
           path: '/leave-request',
           builder: (BuildContext context, GoRouterState state) {
-            return const LeaveRequestScreen();
+            return LeaveRequestScreen(
+              selfLeave: 1,
+              title: state.queryParams['title']!,
+              isManager: false,
+            );
           },
           routes: <RouteBase>[
             GoRoute(

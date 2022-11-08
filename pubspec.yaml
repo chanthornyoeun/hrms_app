@@ -40,6 +40,7 @@ dependencies:
   intl: ^0.17.0
   loading_overlay: ^0.3.0
   humanize_duration: ^0.0.1+1
+  hexcolor: ^3.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
