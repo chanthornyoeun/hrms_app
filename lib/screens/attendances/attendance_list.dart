@@ -53,12 +53,14 @@ class _AttendanceListState extends State<AttendanceList> {
       opacity: 0,
       child: RefreshIndicator(
         onRefresh: _pullRefresh,
-        child: ListView(
-          controller: _scrollController,
-          padding: const EdgeInsets.all(8),
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: _generateAttendaceCards(_attendances),
-        ),
+        child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(8),
+            physics: const AlwaysScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: _attendances.length,
+            itemBuilder: (context, index) =>
+                AttendanceCard(attendance: _attendances[index])),
       ),
     );
   }
@@ -94,13 +96,5 @@ class _AttendanceListState extends State<AttendanceList> {
       _total = res.total;
       _offset = _offset + _limit;
     });
-  }
-
-  List<AttendanceCard> _generateAttendaceCards(List<Attendance> attendances) {
-    List<AttendanceCard> cards = [];
-    for (Attendance attendance in attendances) {
-      cards.add(AttendanceCard(attendance: attendance));
-    }
-    return cards;
   }
 }
