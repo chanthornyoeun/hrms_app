@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/models/response_dto.dart';
+import 'package:hrms_app/providers/notification_badge_count.dart';
 import 'package:hrms_app/screens/notifications/notification_item.dart';
 import 'package:hrms_app/services/notification_service.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -26,6 +28,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.initState();
     _getNotifications({'offset': _offset, 'limit': _limit});
     _handleInfiniteScroll();
+    _clearBadgeCount();
   }
 
   @override
@@ -61,6 +64,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }, clearData: true);
   }
 
+  void _clearBadgeCount() async {
+    ResponseDTO res = await _notificationsService.clearBadgeCount();
+    if (res.statusCode == 200 && mounted) {
+      Provider.of<NotificationBadgeCount>(context, listen: false)
+          .setBadgeCount(0);
+    }
+    print(res.toJson());
+  }
+
   void _getNotifications(Map<String, dynamic> params,
       {bool clearData = false}) async {
     setState(() {
@@ -71,7 +83,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
     params['type'] = 'LEAVE_REQUEST';
     ResponseDTO res = await _notificationsService.list(param: params);
-    if (!context.mounted) return;
+    if (!mounted) return;
     setState(() {
       for (var notification in res.data) {
         _notifications.add(notification);

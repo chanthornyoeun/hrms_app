@@ -20,4 +20,16 @@ class NotificationService extends HttpService {
     });
     return ResponseDTO.fromJson(jsonDecode(res.body));
   }
+
+  Future<ResponseDTO> clearBadgeCount() async {
+    final token = await credentialsService.getCredentials();
+    http.Response res = await http.post(
+      Uri.parse('$basedURL/api/notification-clear-badge-count'),
+      headers: {
+        'X-API-KEY': HttpService.X_API_KEY,
+        HttpHeaders.authorizationHeader: 'Bearer $token'
+      },
+    );
+    return ResponseDTO.fromJson(jsonDecode(res.body));
+  }
 }
