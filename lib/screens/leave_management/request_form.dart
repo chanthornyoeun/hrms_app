@@ -173,7 +173,9 @@ class _RequestFormState extends State<RequestForm> {
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: ElevatedButton(
           onPressed: _submitHandler,
-          style: ElevatedButton.styleFrom(fixedSize: const Size(double.maxFinite, 48)),
+          style: ElevatedButton.styleFrom(
+            fixedSize: const Size(double.maxFinite, 48),
+          ),
           child: Text(
             'Apply Leave'.toUpperCase(),
             style: const TextStyle(fontSize: 16),
@@ -288,10 +290,12 @@ class _RequestFormState extends State<RequestForm> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      duration: const Duration(milliseconds: 1000),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(milliseconds: 2000),
+      ),
+    );
   }
 
   void _goBack() {
