@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hrms_app/models/leave_request.dart';
 import 'package:hrms_app/models/response_dto.dart';
 import 'package:hrms_app/services/leave_request_service.dart';
+import 'package:hrms_app/widgets/expandable_text.dart';
 import 'package:intl/intl.dart';
 
 class LeaveRequestCard extends StatefulWidget {
@@ -54,7 +56,20 @@ class _LeaveRequestCardState extends State<LeaveRequestCard> {
                   style: const TextStyle(
                       fontWeight: FontWeight.w600, fontSize: 16),
                 ),
-                Text(_leaveRequest.status)
+                Row(
+                  children: [
+                    Text(_leaveRequest.status),
+                    IconButton(
+                      onPressed: () => GoRouter.of(context)
+                          .push('/leave-request-details/${_leaveRequest.id}'),
+                      color: Theme.of(context).primaryColor,
+                      padding: EdgeInsets.zero,
+                      splashRadius: 18,
+                      tooltip: 'View details',
+                      icon: const Icon(Icons.arrow_forward),
+                    ),
+                  ],
+                ),
               ],
             ),
             space,
@@ -65,7 +80,7 @@ class _LeaveRequestCardState extends State<LeaveRequestCard> {
             space,
             Text('Day Taken: ${_leaveRequest.day}'),
             space,
-            Text('Leave Reason: ${_leaveRequest.reason}'),
+            ExpandableText(text: 'Leave Reason: ${_leaveRequest.reason}'),
             if (_leaveRequest.status == 'Pending' && widget.selfLeave == 1)
               _cancelLeaveButton(),
             if (_leaveRequest.status == 'Pending' &&
@@ -84,42 +99,58 @@ class _LeaveRequestCardState extends State<LeaveRequestCard> {
       child: Row(
         children: [
           Expanded(
-              child: ConstrainedBox(
-            constraints: const BoxConstraints.tightFor(
-                width: double.infinity, height: 40),
-            child: ElevatedButton(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints.tightFor(
+                width: double.infinity,
+                height: 40,
+              ),
+              child: ElevatedButton(
                 onPressed: () =>
                     _showApproveModalBottom(context, _leaveRequest.id!),
                 style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.zero,
-                            bottomRight: Radius.zero,
-                            topLeft: Radius.circular(4),
-                            bottomLeft: Radius.circular(4)))),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.zero,
+                      bottomRight: Radius.zero,
+                      topLeft: Radius.circular(4),
+                      bottomLeft: Radius.circular(4),
+                    ),
+                  ),
+                ),
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [Icon(Icons.check), Text('Approve')])),
-          )),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [Icon(Icons.check), Text('Approve')],
+                ),
+              ),
+            ),
+          ),
           Expanded(
-              child: ConstrainedBox(
-            constraints: const BoxConstraints.tightFor(
-                width: double.infinity, height: 40),
-            child: ElevatedButton(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints.tightFor(
+                width: double.infinity,
+                height: 40,
+              ),
+              child: ElevatedButton(
                 onPressed: () =>
                     _showRejectModalBottom(context, _leaveRequest.id!),
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.zero,
-                            bottomLeft: Radius.zero,
-                            topRight: Radius.circular(4),
-                            bottomRight: Radius.circular(4)))),
+                  backgroundColor: Colors.red,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.zero,
+                      bottomLeft: Radius.zero,
+                      topRight: Radius.circular(4),
+                      bottomRight: Radius.circular(4),
+                    ),
+                  ),
+                ),
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [Icon(Icons.close), Text('Reject')])),
-          )),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [Icon(Icons.close), Text('Reject')],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -203,8 +234,10 @@ class _LeaveRequestCardState extends State<LeaveRequestCard> {
   }
 
   Future<void> _approveLeave(int leaveRequestId, BuildContext context) async {
-    final ResponseDTO res = await _leaveRequestService.reject(
-        leaveRequestId, _inputController.text);
+    final ResponseDTO res = await _leaveRequestService.approve(
+      leaveRequestId,
+      comment: _inputController.text,
+    );
     if (res.statusCode == 200) {
       _showMessage('Leave request has been approved.');
       setState(() {
@@ -222,55 +255,56 @@ class _LeaveRequestCardState extends State<LeaveRequestCard> {
 
   Future _showRejectModalBottom(BuildContext context, int leaveRequestId) {
     return showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  TextFormField(
-                    keyboardType: TextInputType.multiline,
-                    textAlignVertical: TextAlignVertical.top,
-                    minLines: 3,
-                    maxLines: null,
-                    controller: _inputController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      suffixText: '*',
-                      suffixStyle: TextStyle(
-                        color: Colors.red,
-                      ),
-                      labelText: 'Reason',
-                      hintText: 'Write your reason...',
-                      alignLabelWithHint: true,
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  textAlignVertical: TextAlignVertical.top,
+                  minLines: 3,
+                  maxLines: null,
+                  controller: _inputController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    suffixText: '*',
+                    suffixStyle: TextStyle(
+                      color: Colors.red,
                     ),
-                    validator: (String? value) {
-                      return value == null || value.isEmpty
-                          ? 'Reason is required.'
-                          : null;
-                    },
+                    labelText: 'Reason',
+                    hintText: 'Write your reason...',
+                    alignLabelWithHint: true,
                   ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _rejectLeave(leaveRequestId, context);
-                      }
-                    },
-                    style: _buttonStyle.copyWith(
-                        backgroundColor:
-                            const MaterialStatePropertyAll(Colors.red)),
-                    child: Text('Reject'.toUpperCase()),
-                  ),
-                ],
-              ),
+                  validator: (String? value) {
+                    return value == null || value.isEmpty
+                        ? 'Reason is required.'
+                        : null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _rejectLeave(leaveRequestId, context);
+                    }
+                  },
+                  style: _buttonStyle.copyWith(
+                      backgroundColor:
+                          const MaterialStatePropertyAll(Colors.red)),
+                  child: Text('Reject'.toUpperCase()),
+                ),
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _rejectLeave(int leaveRequestId, BuildContext context) async {
