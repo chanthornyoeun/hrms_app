@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hrms_app/core/credentials_service.dart';
+import 'package:hrms_app/services/user_service.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import '../models/response_dto.dart';
 import '../core/auth_service.dart';
@@ -16,10 +18,16 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool _isLoading = false;
   final AuthService authService = AuthService();
+  final UserService _userService = UserService();
   final CredentialsService credentialsService = CredentialsService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (!context.mounted) return;
                       if (res.statusCode == 200) {
                         credentialsService.save(res.data);
+                        _updateDeviceToken();
                         setState(() {
                           _isLoading = false;
                         });
@@ -125,6 +134,12 @@ class _LoginScreenState extends State<LoginScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
+  }
+
+  /// Save devices token to database
+  Future<void> _updateDeviceToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    await _userService.updateDeviceToken(token);
   }
 
   @override

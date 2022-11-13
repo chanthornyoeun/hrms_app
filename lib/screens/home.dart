@@ -1,29 +1,17 @@
+import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:hrms_app/core/credentials_service.dart';
-import 'package:hrms_app/routes/route.dart';
+import 'package:hrms_app/models/response_dto.dart';
+import 'package:hrms_app/providers/notification_badge_count.dart';
 import 'package:hrms_app/screens/drawer.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hrms_app/services/notification_service.dart';
+import 'package:provider/provider.dart';
 
 import '../services/location_service.dart';
-
-class App extends StatelessWidget {
-  const App({super.key});
-
-  static const String _title = 'HRMS';
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'HRMS',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      routerConfig: routerConfig,
-    );
-  }
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -41,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'employee': HexColor('3D97D2'),
   };
   bool _isManager = false;
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
@@ -50,6 +39,43 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() =>
           {_isManager = roles.contains('ADMIN') || roles.contains('MANAGER')});
     });
+    _broadcastBadgeCount();
+    _receiveMessage();
+    _setupInteractedMessage();
+  }
+
+  void _receiveMessage() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _broadcastBadgeCount();
+    });
+  }
+
+  Future<void> _broadcastBadgeCount() async {
+    ResponseDTO res = await _notificationService.getBadgeCount();
+    if (!context.mounted) return;
+    Provider.of<NotificationBadgeCount>(context, listen: false)
+        .setBadgeCount(res.data['notificationBadge']);
+  }
+
+  Future<void> _setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  Future<void> _handleMessage(RemoteMessage message) async {
+    final Map<String, dynamic> leaveRequest = jsonDecode(message.data['body']);
+    debugPrint('=============== Notification Content: $leaveRequest');
+    GoRouter.of(context).push('/leave-request-details/${leaveRequest['id']}');
   }
 
   @override
@@ -62,8 +88,27 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 300,
       ),
     );
+    final int badgeCount =
+        Provider.of<NotificationBadgeCount>(context).getBadgeCount();
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                tooltip: 'Open notifications',
+                onPressed: () {
+                  GoRouter.of(context).push('/notifications');
+                },
+              ),
+              if (badgeCount > 0) _badgeCount(badgeCount)
+            ],
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Row(
@@ -179,15 +224,42 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Positioned _badgeCount(int badgeCount) {
+    return Positioned(
+      right: 11,
+      top: 11,
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        constraints: const BoxConstraints(
+          minWidth: 16,
+          minHeight: 16,
+        ),
+        child: Text(
+          '$badgeCount',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   Column _leadingIcon(IconData icon, {double? size}) {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: size ?? 30,
-          )
-        ]);
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          size: size ?? 30,
+        )
+      ],
+    );
   }
 }

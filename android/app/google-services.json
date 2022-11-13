@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "870690161174",
+    "project_id": "hrms-815a7",
+    "storage_bucket": "hrms-815a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870690161174:android:be60dbdeef47595d346b37",
+        "android_client_info": {
+          "package_name": "com.hrms_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870690161174-k5g07suijd9cpu8nhtq9lu2356lk547r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8oz0URY5E93MeTDvZ2eO4rqqEIfCaUvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870690161174-k5g07suijd9cpu8nhtq9lu2356lk547r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "870690161174-hkdq552e1mkj5kboo8gko84eno3rktik.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hrmsApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

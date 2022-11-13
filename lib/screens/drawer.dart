@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hrms_app/core/auth_service.dart';
 import 'package:hrms_app/core/credentials_service.dart';
@@ -5,16 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class AppDrawer extends StatefulWidget {
-
   const AppDrawer({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppDrawerState();
-
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-
   bool isLoading = false;
 
   @override
@@ -56,23 +54,31 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: const Text('Log out'),
             onTap: () async {
-              setState(() {
-                isLoading = true;
-              });
-              AuthService authService = AuthService();
-              CredentialsService credentialsService = CredentialsService();
-              await authService.logout();
-              credentialsService.remove();
-              if (!context.mounted) return;
-              setState(() {
-                isLoading = false;
-              });
-                GoRouter.of(context).go('/');
-              },
+              await _logout(context);
+            },
           ),
         ],
       ),
     );
   }
 
+  Future<void> _logout(BuildContext context) async {
+    AuthService authService = AuthService();
+    CredentialsService credentialsService = CredentialsService();
+    String? token = await FirebaseMessaging.instance.getToken();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    await authService.logout(token);
+    await credentialsService.remove();
+
+    if (!context.mounted) return;
+    setState(() {
+      isLoading = false;
+    });
+
+    GoRouter.of(context).go('/');
+  }
 }

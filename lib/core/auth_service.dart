@@ -26,14 +26,19 @@ class AuthService {
     return ResponseDTO.fromJson(jsonDecode(res.body));
   }
 
-  Future<ResponseDTO> logout() async {
+  Future<ResponseDTO> logout(String? deviceToken) async {
     final url = '$basedURL/api/auth/logout';
     String token = await credentailsService.getCredentials();
-    Response res = await post(Uri.parse(url), headers: {
-      'X-API-KEY': X_API_KEY,
-      HttpHeaders.contentTypeHeader: 'application/json',
-      HttpHeaders.authorizationHeader: 'Bearer $token'
-    });
+    Map<String, String> body = {'deviceToken': '$deviceToken'};
+    Response res = await post(
+      Uri.parse(url),
+      headers: {
+        'X-API-KEY': X_API_KEY,
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer $token'
+      },
+      body: jsonEncode(body),
+    );
 
     if (res.statusCode == 200) {
       return ResponseDTO.fromJson(jsonDecode(res.body));

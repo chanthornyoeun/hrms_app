@@ -11,7 +11,7 @@ class CredentialsService {
     prefs.setStringList('roles', roles);
   }
 
-  void remove() async {
+  Future<void> remove() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     prefs.remove('employeeId');
