@@ -19,20 +19,24 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     super.initState();
     _tabs = [
       Tab(
-        child: Row(children: const [
-          Icon(Icons.qr_code),
-          Text(
-            'Check-in/Check-out',
-          )
-        ]),
+        child: Row(
+          children: const [
+            Icon(Icons.qr_code),
+            Text(
+              'Check-In/Check-Out',
+            )
+          ],
+        ),
       ),
       Tab(
-        child: Row(children: const [
-          Icon(Icons.receipt),
-          Text(
-            'Your attendances',
-          )
-        ]),
+        child: Row(
+          children: const [
+            Icon(Icons.fact_check),
+            Text(
+              'Your Attendances',
+            )
+          ],
+        ),
       )
     ];
     _tabController = TabController(vsync: this, length: _tabs.length);
@@ -44,20 +48,17 @@ class _AttendanceScreenState extends State<AttendanceScreen>
       appBar: AppBar(
         title: const Text('Attendance'),
         centerTitle: true,
+        bottom: TabBar(
+          tabs: _tabs,
+          controller: _tabController,
+          isScrollable: true,
+        ),
       ),
-      body: Column(
-        children: [
-          TabBar(
-            tabs: _tabs,
-            controller: _tabController,
-            labelColor: Colors.black,
-          ),
-          Expanded(
-              child: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tabController,
-            children: const [TodayAttendance(), AttendanceList()],
-          ))
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          TodayAttendance(),
+          AttendanceList(),
         ],
       ),
     );

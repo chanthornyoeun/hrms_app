@@ -51,16 +51,20 @@ class _AttendanceListState extends State<AttendanceList> {
     return LoadingOverlay(
       isLoading: _isLoading,
       opacity: 0,
-      child: RefreshIndicator(
-        onRefresh: _pullRefresh,
-        child: ListView.builder(
+      child: Scrollbar(
+        controller: _scrollController,
+        child: RefreshIndicator(
+          onRefresh: _pullRefresh,
+          child: ListView.builder(
             controller: _scrollController,
             padding: const EdgeInsets.all(8),
             physics: const AlwaysScrollableScrollPhysics(),
-            shrinkWrap: true,
             itemCount: _attendances.length,
-            itemBuilder: (context, index) =>
-                AttendanceCard(attendance: _attendances[index])),
+            itemBuilder: (context, index) => AttendanceCard(
+              attendance: _attendances[index],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -91,10 +95,18 @@ class _AttendanceListState extends State<AttendanceList> {
         _attendances.add(Attendance.fromJson(attendance));
       }
     }
+
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
       _total = res.total;
       _offset = _offset + _limit;
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

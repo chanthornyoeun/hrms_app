@@ -45,7 +45,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
           if (snapshot.hasError) {
             return const Text("Something went wrong!");
           }
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
@@ -74,7 +74,7 @@ class _TodayAttendanceState extends State<TodayAttendance> {
               if (snapshot.hasError) {
                 return const Text("You haven't check-in yet today.");
               }
-              return const CircularProgressIndicator();
+              return Container();
             },
           ),
         ),
