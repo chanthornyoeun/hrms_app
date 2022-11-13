@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: LoadingOverlay(
         isLoading: _isLoading,
-        opacity: 0.2,
+        opacity: 0.1,
         child: _buildWidget(),
       ),
     );

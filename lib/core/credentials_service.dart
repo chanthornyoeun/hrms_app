@@ -8,6 +8,7 @@ class CredentialsService {
         .toList(growable: false);
     prefs.setString('token', credential['token']);
     prefs.setInt('employeeId', credential['employee']['id']);
+    prefs.setString('profilePhoto', credential['employee']['profilePhoto']);
     prefs.setStringList('roles', roles);
   }
 
@@ -30,5 +31,10 @@ class CredentialsService {
   Future<List<String>> getRoles() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getStringList('roles') ?? [];
+  }
+
+  Future<String> getProfilePhoto() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('profilePhoto') ?? '';
   }
 }
