@@ -3,6 +3,7 @@ import 'package:hrms_app/core/debounce_time.dart';
 import 'package:hrms_app/models/employee.dart';
 import 'package:hrms_app/models/response_dto.dart';
 import 'package:hrms_app/services/employee_service.dart';
+import 'package:hrms_app/widgets/avatar.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class EmployeeScreen extends StatefulWidget {
@@ -46,11 +47,19 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     });
   }
 
+  Future<void> _pullRefresh() async {
+    _offset = 0;
+    _getEmployees({
+      'offset': _offset,
+      'limit': _limit,
+    }, true);
+  }
+
   void _getEmployees(Map<String, dynamic> params, bool clear) async {
     setState(() {
       _isLoading = true;
     });
-    ResponseDTO res = await _employeeService.get(param: params);
+    ResponseDTO res = await _employeeService.list(param: params);
     if (clear) {
       _employees.clear();
     }
@@ -66,7 +75,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
   void _search(String query) {
     _offset = 0;
-    _clearOnce  = query.isEmpty || query == '';
+    _clearOnce = query.isEmpty || query == '';
     _getEmployees({'offset': _offset, 'limit': _limit, 'search': query}, true);
   }
 
@@ -85,7 +94,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       ),
       body: LoadingOverlay(
           isLoading: _isLoading,
-          opacity: 0.2,
+          opacity: 0.1,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -115,10 +124,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(10),
-                  children: _generateEmployeeCard(_employees),
+                child: RefreshIndicator(
+                  onRefresh: _pullRefresh,
+                  child: ListView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(10),
+                    children: _generateEmployeeCard(_employees),
+                  ),
                 ),
               ),
             ],
@@ -134,8 +146,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         child: Container(
           padding: const EdgeInsets.all(10),
           child: Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
-              _getAvatar(employee.gender, employee.profilePhoto),
+              Avatar(
+                picture: employee.profilePhoto,
+                gender: employee.gender,
+                padding: const EdgeInsets.fromLTRB(10, 20, 20, 20),
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -148,7 +165,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   Text(
                     employee.position ?? 'No position',
                     style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic),
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(employee.department ?? 'No department',
@@ -172,18 +192,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       cards.add(card);
     }
     return cards;
-  }
-
-  Container _getAvatar(String gender, String? url) {
-    return Container(
-        padding: const EdgeInsets.fromLTRB(10, 20, 20, 20),
-        child: CircleAvatar(
-          radius: 32,
-          backgroundImage: url != null
-              ? NetworkImage(url)
-              : AssetImage('assets/images/${gender.toLowerCase()}.png')
-                  as ImageProvider,
-        ));
   }
 
   @override
