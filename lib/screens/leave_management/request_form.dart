@@ -46,7 +46,7 @@ class _RequestFormState extends State<RequestForm> {
   }
 
   void _getLeaveTypes() async {
-    ResponseDTO res = await _leaveTypeService.get(param: {'limit': 20});
+    ResponseDTO res = await _leaveTypeService.list(param: {'limit': 20});
     setState(() {
       for (var leveType in res.data) {
         _leaveTypes.add(LeaveType.fromJson(leveType));

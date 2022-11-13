@@ -80,7 +80,7 @@ class _AttendanceListState extends State<AttendanceList> {
     });
     final int employeeId = await CredentialsService().getCurrentEmployee();
     params['employeeId'] = employeeId;
-    ResponseDTO res = await _attendanceService.get(param: params);
+    ResponseDTO res = await _attendanceService.list(param: params);
 
     if (clearData) {
       _attendances.clear();

@@ -10,7 +10,20 @@ abstract class HttpService {
   static const String X_API_KEY = 'aHJtcy1wcm9qZWN0LXhhcGlrZXktc2Vj';
   final CredentialsService credentialsService = CredentialsService();
 
-  Future<ResponseDTO> get({Map<String, dynamic>? param}) async {
+  Future<ResponseDTO> get(int id) async {
+    final token = await credentialsService.getCredentials();
+    String url = '$basedURL${getUrl()}/$id';
+    http.Response res = await http.get(
+      Uri.parse(url),
+      headers: {
+        'X-API-KEY': 'aHJtcy1wcm9qZWN0LXhhcGlrZXktc2Vj',
+        HttpHeaders.authorizationHeader: 'Bearer $token'
+      },
+    );
+    return ResponseDTO.fromJson(jsonDecode(res.body));
+  }
+
+  Future<ResponseDTO> list({Map<String, dynamic>? param}) async {
     final token = await credentialsService.getCredentials();
     http.Response res =
         await http.get(Uri.parse(getFullURL(params: param)), headers: {

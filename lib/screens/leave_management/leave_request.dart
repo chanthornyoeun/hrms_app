@@ -72,7 +72,7 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
       }
     });
     widget.selfLeave == 1 ? params['selfLeave'] = 1 : params['reportToMe'] = 1;
-    ResponseDTO res = await _leaveRequestService.get(param: params);
+    ResponseDTO res = await _leaveRequestService.list(param: params);
 
     if (res.statusCode == 200) {
       for (var leaveRequest in res.data) {

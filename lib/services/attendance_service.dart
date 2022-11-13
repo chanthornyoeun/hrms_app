@@ -53,6 +53,6 @@ class AttendanceService extends HttpService {
       'fromDate': fromDate,
       'toDate': toDate
     };
-    return get(param: params);
+    return list(param: params);
   }
 }
