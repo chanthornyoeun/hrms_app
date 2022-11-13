@@ -96,17 +96,20 @@ class _LeaveRequestScreenState extends State<LeaveRequestScreen> {
       body: LoadingOverlay(
         isLoading: _isLoading,
         opacity: 0.2,
-        child: RefreshIndicator(
-          onRefresh: _pullRefresh,
-          child: ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(8),
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: _leaveRequests.length,
-            itemBuilder: (context, index) => LeaveRequestCard(
-              leaveRequest: _leaveRequests[index],
-              selfLeave: widget.selfLeave,
-              isManager: widget.isManager,
+        child: Scrollbar(
+          controller: _scrollController,
+          child: RefreshIndicator(
+            onRefresh: _pullRefresh,
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(8),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: _leaveRequests.length,
+              itemBuilder: (context, index) => LeaveRequestCard(
+                leaveRequest: _leaveRequests[index],
+                selfLeave: widget.selfLeave,
+                isManager: widget.isManager,
+              ),
             ),
           ),
         ),
