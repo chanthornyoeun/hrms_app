@@ -5,6 +5,7 @@ import 'package:hrms_app/models/response_dto.dart';
 import 'package:hrms_app/services/employee_service.dart';
 import 'package:hrms_app/widgets/avatar.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmployeeScreen extends StatefulWidget {
   const EmployeeScreen({Key? key}) : super(key: key);
@@ -93,105 +94,154 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         title: const Text('Employees'),
       ),
       body: LoadingOverlay(
-          isLoading: _isLoading,
-          opacity: 0.1,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: _searchController,
-                      onChanged: (value) =>
-                          _debounceTime.run(() => _search(value)),
-                      decoration: InputDecoration(
-                        hintText:
-                            "Search by name, position, department and phone",
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: _clearHandler,
-                        ),
-                      ),
+        isLoading: _isLoading,
+        opacity: 0.1,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: _searchController,
+                  onChanged: (value) => _debounceTime.run(
+                    () => _search(value),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Search by name, position, department and phone",
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: _clearHandler,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              Expanded(
+              ],
+            ),
+            Expanded(
+              child: Scrollbar(
+                controller: _scrollController,
                 child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView(
+                  child: ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.all(10),
-                    children: _generateEmployeeCard(_employees),
+                    padding: const EdgeInsets.all(6),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: _employees.length,
+                    itemBuilder: (context, index) =>
+                        _createEmployeeCard(_employees[index]),
                   ),
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  List<Card> _generateEmployeeCard(List<Employee> employees) {
-    List<Card> cards = [];
-    for (Employee employee in employees) {
-      final Card card = Card(
-        elevation: 4,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Avatar(
-                picture: employee.profilePhoto,
-                gender: employee.gender,
-                padding: const EdgeInsets.fromLTRB(10, 20, 20, 20),
-              ),
-              Column(
+  Card _createEmployeeCard(Employee employee) {
+    return Card(
+      elevation: 4,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+              height: double.infinity,
+              width: 4,
+              color: employee.isActive != null && employee.isActive == 1
+                  ? Colors.green
+                  : Colors.red,
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    employee.name,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w500),
+                  Avatar(
+                    picture: employee.profilePhoto,
+                    gender: employee.gender,
+                    padding: const EdgeInsets.only(right: 16),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    employee.position ?? 'No position',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(employee.department ?? 'No department',
-                      style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.normal)),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    direction: Axis.horizontal,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: <Widget>[
-                      const Icon(Icons.phone),
-                      Text(employee.phone ?? ''),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        employee.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        employee.position ?? 'No position',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 12,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: IconButton(
+                              onPressed: () => {
+                                launchUrl(
+                                    Uri(scheme: 'tel', path: employee.phone))
+                              },
+                              padding: EdgeInsets.zero,
+                              splashRadius: 12,
+                              icon: const Icon(
+                                Icons.call,
+                                size: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Theme.of(context).primaryColor,
+                              child: IconButton(
+                                onPressed: () => {
+                                  launchUrl(
+                                    Uri(
+                                      scheme: 'mailto',
+                                      path: employee.email,
+                                    ),
+                                  )
+                                },
+                                padding: EdgeInsets.zero,
+                                splashRadius: 12,
+                                icon: const Icon(
+                                  Icons.mail,
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-      cards.add(card);
-    }
-    return cards;
+      ),
+    );
   }
 
   @override
